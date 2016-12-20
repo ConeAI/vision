@@ -1,9 +1,9 @@
-from LSPGlobals import FLAGS
+from deeppose_globals import FLAGS
 import LSPModels
 import tensorflow as tf
 import time
 from datetime import datetime
-from LSPDrawLines import drawPoseOnImage as draw
+from deeppose_draw import drawPoseOnImage as draw
 import glob
 import math
 import numpy as np

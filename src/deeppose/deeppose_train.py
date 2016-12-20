@@ -6,7 +6,7 @@ from tensorflow.python.platform import gfile
 import time
 from datetime import datetime
 import deeppose_globals
-from LSPDrawLines import drawPoseOnImage as draw
+from deeppose_draw import drawPoseOnImage as draw
 
 
 def main():
@@ -93,8 +93,11 @@ def train(trainSetFileNames, testSetFileNames, train_dir):
 
         # Build an initialization operation to run below.
         init = tf.initialize_all_variables()
+        config = tf.ConfigProto(
+                        device_count = {'GPU': 0}
+                            )
 
-        with tf.Session() as sess:
+        with tf.Session(config=config) as sess:
             # Start populating the filename queue.
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(coord=coord)
