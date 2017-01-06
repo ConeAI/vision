@@ -163,6 +163,7 @@ def transform_example(index=0):
 
 
 # TODO(wojtek): move to separate file
+# Also, decouple from deeppose code
 class PoseImage(object):
     """Class to hold and transform an image containing pose information."""
 
