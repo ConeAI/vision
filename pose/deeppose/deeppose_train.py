@@ -1,12 +1,14 @@
-from deeppose_globals import FLAGS
-import deeppose_model
+from datetime import datetime
 import os
+import time
+
 import tensorflow as tf
 from tensorflow.python.platform import gfile
-import time
-from datetime import datetime
-import deeppose_globals
-from deeppose_draw import drawPoseOnImage as draw
+
+from pose.common import common_globals
+from pose.common.common_globals import FLAGS
+from pose.common.draw import drawPoseOnImage as draw
+from pose.deeppose import deeppose_model
 
 
 def main():
@@ -28,12 +30,12 @@ def read_my_file_format(filename_queue):
     record_bytes = tf.decode_raw(image_data, tf.uint8)
 
     # The first bytes represent the label, which we convert from uint8->float32.
-    labels_ = tf.cast(tf.slice(record_bytes, [0], [deeppose_globals.TotalLabels]), tf.float32)
+    labels_ = tf.cast(tf.slice(record_bytes, [0], [common_globals.TotalLabels]), tf.float32)
 
     # The remaining bytes after the label represent the image, which we reshape
     # from [depth * height * width] to [depth, height, width].
     depth_major = tf.reshape(tf.slice(record_bytes,
-                             [deeppose_globals.TotalLabels], [deeppose_globals.TotalImageBytes]),
+                             [common_globals.TotalLabels], [common_globals.TotalImageBytes]),
                              [FLAGS.input_size, FLAGS.input_size, FLAGS.input_depth])
     # Convert from [depth, height, width] to [height, width, depth].
     #processed_example = tf.cast(tf.transpose(depth_major, [1, 2, 0]), tf.float32)
@@ -72,7 +74,7 @@ def train(trainSetFileNames, testSetFileNames, train_dir):
 
         # Placeholder to switch between train and test sets.
         dataShape = [FLAGS.batch_size, FLAGS.input_size, FLAGS.input_size, FLAGS.input_depth]
-        labelShape = [FLAGS.batch_size, deeppose_globals.TotalLabels]
+        labelShape = [FLAGS.batch_size, common_globals.TotalLabels]
         example_batch = tf.placeholder(tf.float32, shape=dataShape)
         label_batch = tf.placeholder(tf.float32, shape=labelShape)
 

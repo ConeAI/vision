@@ -1,9 +1,12 @@
+"""
+Code to draw images with pose locations.
+"""
 from PIL import Image, ImageDraw
-from deeppose_globals import FLAGS
-from deeppose_globals import BodyParts as p
 from tensorflow.python.platform import gfile
 import os.path as pt
-#import numpy as np
+
+from pose.common.common_globals import FLAGS
+from pose.common.common_globals import BodyParts as p
 
 
 labels_ = 0

@@ -1,14 +1,17 @@
-from deeppose_globals import FLAGS
-import LSPModels
-import tensorflow as tf
 import time
 from datetime import datetime
-from deeppose_draw import drawPoseOnImage as draw
 import glob
 import math
+from os.path import basename as b
+
+import tensorflow as tf
 import numpy as np
 import PIL.Image as Image
-from os.path import basename as b
+
+from pose.common.common_globals import FLAGS
+from pose.common.draw import drawPoseOnImage as draw
+from pose.deeppose import deeppose_model
+
 
 def main():
     imagelist = sorted(glob.glob(FLAGS.input_dir + '*.' + FLAGS.input_type))
@@ -18,12 +21,14 @@ def main():
 
     evalDeepPose(imagelist)
 
+
 def resizeLabels(argLabels, argResize):
     for i in range(argLabels.shape[0]):
         argLabels[i,:,0] *= argResize[i,0]
         argLabels[i,:,1] *= argResize[i,1]
 
     return argLabels
+
 
 def evalDeepPose(imagelist):
     with tf.Graph().as_default():
@@ -32,7 +37,7 @@ def evalDeepPose(imagelist):
         input_images = tf.placeholder(tf.float32, shape=dataShape)
 
         # Build a Graph that computes the logits predictions from the inference model.
-        logits = LSPModels.inference(input_images, FLAGS.batch_size, keepProb=1)
+        logits = deeppose_model.inference(input_images, FLAGS.batch_size, keepProb=1)
 
         # Create a saver.
         saver = tf.train.Saver(tf.all_variables())
@@ -98,6 +103,7 @@ def evalDeepPose(imagelist):
             coord.request_stop()
             coord.join(threads)
             print('Process Finished...')
+
 
 if __name__ == '__main__':
     main()

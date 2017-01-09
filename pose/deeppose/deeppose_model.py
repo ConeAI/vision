@@ -1,7 +1,9 @@
-import tensorflow as tf
-import deeppose_globals
-from deeppose_globals import FLAGS
 import re
+
+import tensorflow as tf
+
+from pose.common import common_globals
+from pose.common.common_globals import FLAGS
 
 
 def _activation_summary(x):
@@ -17,7 +19,7 @@ def _activation_summary(x):
     """
     # Remove 'tower_[0-9]/' from the name in case this is a multi-GPU training
     # session. This helps the clarity of presentation on tensorboard.
-    tensor_name = re.sub('%s_[0-9]*/' % deeppose_globals.TOWER_NAME, '', x.op.name)
+    tensor_name = re.sub('%s_[0-9]*/' % common_globals.TOWER_NAME, '', x.op.name)
     tf.histogram_summary(tensor_name + '/activations', x)
     tf.scalar_summary(tensor_name + '/sparsity', tf.nn.zero_fraction(x))
 
@@ -148,9 +150,9 @@ def inference(images, batch_size):
     # softmax, i.e. softmax(WX + b)
     with tf.variable_scope('softmax_linear') as scope:
         weights = tf.Variable(
-            tf.random_normal([2048, deeppose_globals.TotalLabels], stddev=1/2048.0), name='weights')
+            tf.random_normal([2048, common_globals.TotalLabels], stddev=1/2048.0), name='weights')
         biases = tf.Variable(
-            tf.constant(0.0, dtype=tf.float32, shape=[deeppose_globals.TotalLabels]), name='biases')
+            tf.constant(0.0, dtype=tf.float32, shape=[common_globals.TotalLabels]), name='biases')
         softmax_linear = tf.nn.xw_plus_b(local2, weights, biases, name=scope.name)
         _activation_summary(softmax_linear)
 
